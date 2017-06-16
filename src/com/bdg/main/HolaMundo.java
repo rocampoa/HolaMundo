@@ -83,7 +83,6 @@ public class HolaMundo {
     System.out.println("Utilizando un map");
     Arrays.asList(numberString).stream().map(doubleFunction).forEach(System.out::println);
 
-    System.out.println("Hola mundo cruel, mi primer aplicativo en IntelliJ");
   }
 
 }
