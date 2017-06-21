@@ -100,8 +100,10 @@ public class Boat {
       System.out.println(fr.nextInt());
     }
 
-  //Extending Fluent interfaces: Fluent interfaces are elegant and can be extended if needed . However, you have to be
-  // careful when you do this. The Key to the approach is to use generics.
+    /*
+    Extending Fluent interfaces: Fluent interfaces are elegant and can be extended if needed . However, you have to be
+    careful when you do this. The Key to the approach is to use generics.
+    */
     SailBoat sailBoat = new SailBoat().named("Endeavor").country("United Kingdom").sails(3).tonnage(15).hulls(2);
     System.out.println(sailBoat);
 
