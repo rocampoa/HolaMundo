@@ -3,8 +3,10 @@ package com.bdg.main;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Created by Rafael on 15/06/2017.
@@ -99,6 +101,33 @@ public class RFuncion {
     System.out.println(memoizationFunction.apply(2));
     System.out.println(memoizationFunction.apply(2));
     System.out.println(memoizationFunction.apply(2));
+
+    //Utilizando closures
+    ClosureExcample ce = new ClosureExcample();
+    final Function<String, String> function = ce.getStringOperation();
+    System.out.println(function.apply("Closure"));
+
+    BiFunction<String, String, String> bufuncion = (a, b) -> a + b;
+    System.out.println(bufuncion.apply("cat", "dog"));
+
+    ObjetoDTO[] objetos = {new ObjetoDTO(15), new ObjetoDTO(18), new ObjetoDTO(12), new ObjetoDTO(42), new ObjetoDTO(50)};
+
+    Arrays.asList(objetos).forEach(s -> s.setMayor(s.getEdad() >= 18));
+
+    //Suplier interface retorna algún tipo de dato pero ninguna entrada es provita
+    Supplier<Integer> randomInteger = () -> {
+      Random random = new Random();
+      int number = random.nextInt(10);
+      while (number >= 5 && number <= 8) {
+        number = random.nextInt(10);
+      }
+      return number;
+    };
+
+    for (int i = 0; i < 10; i++) {
+      System.out.println(randomInteger.get() + " - ");
+    }
+
   }
 }
 
