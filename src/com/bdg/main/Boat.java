@@ -2,6 +2,7 @@ package com.bdg.main;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
@@ -17,6 +18,8 @@ public class Boat {
   private String country;
   private int tonnage;
   private int draft;
+
+  static Consumer<Node> inorder;
 
   public String getName() {
     return name;
@@ -77,6 +80,28 @@ public class Boat {
        .append(" Tonnage: ").append(this.tonnage).append(" Draft: ").append(this.draft);
     return sb.toString();
   }
+
+  public void head(String phrase) {
+    if (phrase.length() == 0) {
+      return;
+    }
+    head(phrase.substring(1));
+    System.out.print(phrase.charAt(0));
+  }
+
+  public void tail(String phrase) {
+    if (phrase.length() == 0) {
+      return;
+    }
+    System.out.print(phrase.charAt(0));
+    tail(phrase.substring(1));
+  }
+
+  private static void replicatePart(Part part) {
+    // Replicate part
+    System.out.println("Part replicated: " + part);
+  }
+
 
   public static void main(String[] args) {
     // Método tradicional
@@ -332,6 +357,199 @@ public class Boat {
     System.out.println(totalHours);
 
     System.out.println("Understanding stateless operations");
+
+    //Ejemplo de recursión
+    boat.head("José Rafael Ocampo Antero");
+    boat.tail("José Rafael Ocampo Antero");
+
+    Node root = new Node(12);
+    root.addLeft(8).addRight(9);
+    root.addRight(18).addLeft(14).addRight(17);
+
+    Node.inOrder(root);
+    Node.preOrder(root);
+    Node.postOrder(root);
+
+    //Implementación de inorder utilizando lambda expresión y la interface funcional Cnsumer
+
+    inorder = (Node node) -> {
+      if (node != null) {
+        inorder.accept(node.left());
+        System.out.print(node.getValue() + " - ");
+        inorder.accept(node.right());
+      }
+    };
+
+    inorder.accept(root);
+
+    String animal = "CAT";
+    Optional<String> opt;
+    opt = Optional.ofNullable(animal);
+    System.out.println(opt);
+
+    animal = null;
+    opt = Optional.ofNullable(animal);
+    System.out.println(opt);
+
+    Customer customer1 = new Customer(123, "Sue");
+    Customer customer2 = new Customer(456, "Bob");
+    Customer customer3 = new Customer(789, "Mary");
+    Customer defaultCustomer = new Customer(0, "Default");
+
+    Customers customers = new Customers();
+
+    customers.addCustomer(defaultCustomer.getId(), defaultCustomer);
+    customers.addCustomer(customer1.getId(), customer1);
+    customers.addCustomer(customer2.getId(), customer2);
+    customers.addCustomer(customer3.getId(), customer3);
+    int id = 234;
+    Customer customer = customers.findCustomerWithID(id);
+
+    //Forma tradicional de tratar la búsqueda y los resultados
+    if (customer != null) {
+      if (customer.getName().equals("Mary")) {
+        System.out.println("Processing Mary");
+      } else {
+        System.out.println(customer);
+      }
+    } else {
+      System.out.println(defaultCustomer);
+    }
+
+    //Utilizando Optional no cambia mucho
+    Optional<Customer> optionalCustomer =
+            customers.findOptionalCustomerWithID(id);
+
+    if (optionalCustomer.isPresent()) {
+      if (optionalCustomer.get().getName().equals("Mary")) {
+        System.out.println("Processing Mary");
+      }else {
+        System.out.println(optionalCustomer.get());
+      }
+    } else {
+      System.out.println(defaultCustomer);
+    }
+
+    // If present acepta una lambda expresión que implmenta Consumer
+    Consumer<Customer> consume = o -> {
+      if (o.getName().equals("Mary")) {
+        System.out.println("Processing Mary");
+      } else {
+        System.out.println(optionalCustomer.get());
+      }
+    };
+
+    optionalCustomer.ifPresent(consume);
+
+    /*
+    Cuando no hay un valor de retorno se pueden hacer 3 cosas:
+    1 - Usar un valor sustituto
+    2 - Llamar una función que retorne un valor sustituto
+    3 - Throw an Exception
+    Ejemplo
+     */
+
+    //Usando un valor sustituto
+    Customer current = customers.findOptionalCustomerWithID(id).orElse(defaultCustomer);
+
+    //Llamando una función que retorna un valor sustituto
+    current = customers.findOptionalCustomerWithID(id).orElseGet(() -> customers.findOptionalCustomerWithID(0).get());
+
+    OptionalInt result = IntStream.of(1, 5, 12, 7, 5, 24, 6)
+            .filter(n -> n > 10)
+            .max();
+    result.ifPresent(o -> System.out.println(o));
+
+    id = 456;
+    current = customers
+            .findOptionalCustomerWithID(id)
+            .filter(i -> i.getId() > 400)
+            .orElseGet(() ->
+                    customers.findOptionalCustomerWithID(0).get());
+    System.out.println(current);
+
+    // Usando Map
+    String name;
+    Optional<Customer> optCustomer =
+            customers.findOptionalCustomerWithID(id);
+    if (optCustomer.isPresent()) {
+      name = optCustomer.get().getName().trim();
+    } else {
+      name = "No Name";
+    }
+    System.out.println(name);
+
+    name = customers
+            .findOptionalCustomerWithID(id)
+            .map(o->o.getName().trim())
+            .orElse("No Name");
+    System.out.println(name);
+
+    Function<? super Customer, Customer> processMary = x -> {
+      if (x.getName().equals("Mary")) {
+        System.out.println("Processing Mary...");
+      }
+      return x;
+    };
+
+    Function<? super Customer, Customer> processNotMary = x -> {
+      if (!x.getName().equals("Mary")) {
+        System.out.println(x);
+      }
+      return x;
+    };
+
+    Function<? super Customer, Customer> processCustomer = x -> {
+      if (x.getName().equals("Mary")) {
+        System.out.println("Processing Mary");
+      } else {
+        System.out.println(optionalCustomer.get());
+      }
+      return x;
+    };
+
+    try {
+      id = 789;
+      current = customers
+              .findOptionalCustomerWithID(id)
+              .map(processMary)
+              .map(processNotMary)
+              .orElseThrow(NoCustomerFoundException::new);
+      System.out.println(current);
+    } catch (NoCustomerFoundException e) {
+      e.printStackTrace();
+    }
+
+    // Se puede obtener el mismo resultado con
+    try {
+      current = customers
+              .findOptionalCustomerWithID(id)
+              .map(processCustomer)
+              .orElseThrow(NoCustomerFoundException::new);
+      System.out.println(current);
+    } catch (NoCustomerFoundException e) {
+      e.printStackTrace();
+    }
+
+    // Ejemplos de Monads
+    Map<Integer, Part> parts = new HashMap<>();
+    parts.put(123, new Part(123,"bolt"));
+    parts.put(456, new Part(123,"nail"));
+    parts.put(789, new Part(123,"wire"));
+
+    int partId = 123;
+    Part part = parts.get(partId);
+    part.setOutOfStock(true);
+    part.setPartName(part.getPartName()+"-Out-Of-Stock");
+    replicatePart(part);
+
+    // Usando monads
+    Optional<Part> optPart = Optional.of(parts.get(456));
+    System.out.println(optPart.flatMap(x -> x.outOfStock(true))
+            .flatMap(x -> x.partName(x.getPartName() + " - Out of Stock"))
+            .flatMap(Part::replicatePartMonad)
+            .orElseThrow(() -> new RuntimeException())
+    );
 
   }
 }
