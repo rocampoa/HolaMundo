@@ -1,4 +1,4 @@
-package com.bdg.main;
+package com.bdg.main.strategy;
 
 import java.util.List;
 

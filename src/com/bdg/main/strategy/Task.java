@@ -1,4 +1,4 @@
-package com.bdg.main;
+package com.bdg.main.strategy;
 
 /**
  * Created by Rafael on 1/07/2017.
