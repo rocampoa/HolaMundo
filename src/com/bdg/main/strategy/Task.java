@@ -1,7 +1,8 @@
 package com.bdg.main.strategy;
 
 /**
- * Created by Rafael on 1/07/2017.
+ * @author Rafael Ocampo
+ * Ejemplo
  */
 public class Task {
 

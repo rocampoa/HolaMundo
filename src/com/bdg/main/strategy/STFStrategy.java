@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Created by Rafael on 1/07/2017.
  * Strategia Shortest-Task-First
+ * Para incluir en la rama de desarrollo
  */
 public class STFStrategy implements SchedulingStrategy{
 
